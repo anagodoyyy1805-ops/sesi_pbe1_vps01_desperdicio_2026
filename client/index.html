@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SESI - Consumo de Energia</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main class="container">
+        <section class="card">
+            <h1>Controle de Consumo Energético</h1>
+            <p class="descricao">
+                Cadastre equipamentos e acompanhe o consumo de energia do SESI.
+            </p>
+            <form id="formulario">
+                <div class="campo">
+                    <label for="local">Local</label>
+                    <input type="text" id="local" name="local" placeholder="Ex.: Laboratório 03" required>
+                </div>
+
+                <div class="campo">
+                    <label for="equipamento">Equipamento</label>
+                    <input
+                        type="text"
+                        id="equipamento"
+                        name="equipamento"
+                        placeholder="Ex.: Ar-condicionado"
+                        required
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="consumo_kwh">Consumo (kWh)</label>
+                    <input type="number" id="consumo_kwh" name="consumo_kwh" placeholder="Ex.: 185.4" step="0.1" min="0" required>
+                </div>
+
+                <div class="campo">
+                    <label for="mes_referencia">Mês de referência</label>
+                    <input type="month" id="mes_referencia" name="mes_referencia" required>
+                </div>
+
+                <div class="campo">
+                    <label for="status">Status</label>
+
+                    <select id="status" name="status" required>
+                        <option value="">Selecione uma opção</option>
+                        <option value="Consumo normal">
+                            Consumo normal
+                        </option>
+                        <option value="Consumo elevado">
+                            Consumo elevado
+                        </option>
+                        <option value="Possível desperdício">
+                            Possível desperdício
+                        </option>
+                    </select>
+                </div>
+                <button type="submit">
+                    Cadastrar equipamento
+                </button>
+            </form>
+            <div id="mensagem"></div>
+        </section>
+    </main>
+
+    <script>
+        const formulario = document.getElementById("formulario");
+        const mensagem = document.getElementById("mensagem");
+
+        formulario.addEventListener("submit", async function(event) 
+
+            event.preventDefault();
+
+            const dados = {
+                local: document.getElementById("local").value,
+                equipamento: document.getElementById("equipamento").value,
+                consumo_kwh: Number(
+                    document.getElementById("consumo_kwh").value
+                ),
+                mes_referencia:
+                    document.getElementById("mes_referencia").value,
+                status:
+                    document.getElementById("status").value
+            };
+
+            try {
+                const resposta = await fetch("/equipamentos", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                body: JSON.stringify(dados)
+                });
+
+                    body: JSON.stringify(dados)
+                });
+
+                const resultado = await resposta.json();
+                if (resposta.ok) {
+                    mensagem.className = "sucesso";
+                    mensagem.textContent =
+                        `Equipamento cadastrado com sucesso! ID: ${resultado.id}`;
+                    formulario.reset();
+                } else {
+                    mensagem.className = "erro";
+                    mensagem.textContent =
+                        resultado.mensagem ||
+                        "Erro ao cadastrar equipamento.";
+                }
+            
+    </script>
+
+</body>
+</html>
+
